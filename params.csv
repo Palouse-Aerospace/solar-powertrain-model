@@ -1,17 +1,29 @@
-﻿param,value,description
-C_L,0.8,Coeff of lift
-C_D,0.017,"(Y)Coeff of drag, need to add parasitic and induced drag"
-Eta_prop,1,"(X)Prop, Esc, Motor effiency, need to test"
-Eta_mppt,0.97,"(X)Mppt efficency, model later?"
-m_rest,2,(X)Estimate fusulage + tail weight(Kg)
-m_L,0.5,"(X)Mass of layup, per meter, without batteries(Kg)"
-P_av,2,"(X)Power consumption of avionics(servos, flight controller ect) (W)"
-P_pld,0,"(X)Power consuption  of payload(Remote id, leds, fpv ect) (W)"
-Ch,0.3,Chord(M)
-L_min,3,Minimum wingspan (M)
-L_max,7,Maximum wingspan (M)
-m_bat_min,0,
-m_bat_max,4,
-e_bat,250,Specific energy (Wh/kg)
-f_usable,0.8,Fraction of rated energy usable
-reserve_fraction,0.3,Fraction of the battery we want available by morning
+﻿param,value,unit,description,notes
+C_L,0.8,,Coeff of lift,
+C_D,0.017,,"(Y)Coeff of drag, need to add parasitic and induced drag",
+Eta_prop,1,,"(X)Prop, Esc, Motor effiency, need to test",
+Eta_mppt,0.97,,"(X)Mppt efficency, model later?",
+m_rest,2,kg,(X)Estimate fusulage + tail weight,
+m_L,0.5,kg,"(X)Mass of layup, per meter, without batteries",
+P_av,2,W,"(X)Power consumption of avionics(servos, flight controller ect)",
+P_pld,0,W,"(X)Power consuption  of payload(Remote id, leds, fpv ect)",
+Ch,0.3,m,Chord,
+L_min,3,m,Minimum wingspan,
+L_max,7,m,Maximum wingspan,
+m_bat_min,0,kg,,
+m_bat_max,4,kg,,
+e_bat,250,Wh/kg,Specific energy,
+f_usable,0.8,,Fraction of rated energy usable,
+reserve_fraction,0.3,,Fraction of the battery we want available by morning,
+m_other,0.35,kg,non-wing weight,structure calcs
+TC,0.073,,max thickness to chord ratio,structure calcs
+G_max,6,G,maximum G's experienced,structure calcs
+FOS,1.5,,structural FOS,structure calcs
+b,2.04,m,wingspan,structure calcs
+nu_max,0.02,m,max deflection allowed,structure calcs
+E_cap,1.34E+11,Pa,spar cap modulus. https://www.performance-composites.com/carbonfibre/mechanicalproperties_2.asp,structure calcs
+th_skin,0.000075,m,wing skin layer thickness,structure calcs
+th_cap,0.00015,m,spar cap thickness,structure calcs
+db,0.02,m,wing station spacing,structure calcs
+rho_cap,1780,kg/m^3,spar cap density. https://acpcomposites.com/shop/fabrics/tow-cord/carbon-fiber-tow,structure calcs
+dtheta_max,0.01,rad/m,max curvature allowed,structure calcs

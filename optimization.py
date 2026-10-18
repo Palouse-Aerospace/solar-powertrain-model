@@ -12,6 +12,7 @@ with open('params.csv', newline='', mode='r', encoding='utf-8-sig') as file:
     p = {row['param']:float(row['value']) for row in reader}
 
 # Aircraft and environmental parameters
+# TODO put into csv
 
 lat = 46.7   #latitude of flight(degrees)
 h = 820      #altitude(M)
