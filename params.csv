@@ -1,4 +1,5 @@
 ﻿param,value,unit,description,notes
+debug,1,,bool for debug info,
 C_L,0.8,,Coeff of lift,
 C_D,0.017,,"(Y)Coeff of drag, need to add parasitic and induced drag",
 Eta_prop,1,,"(X)Prop, Esc, Motor effiency, need to test",
@@ -7,23 +8,30 @@ m_rest,2,kg,(X)Estimate fusulage + tail weight,
 m_L,0.5,kg,"(X)Mass of layup, per meter, without batteries",
 P_av,2,W,"(X)Power consumption of avionics(servos, flight controller ect)",
 P_pld,0,W,"(X)Power consuption  of payload(Remote id, leds, fpv ect)",
-Ch,0.3,m,Chord,
-L_min,3,m,Minimum wingspan,
-L_max,7,m,Maximum wingspan,
+Ch,0.22,m,Chord,
+b_min,3,m,Minimum wingspan,
+b_max,7,m,Maximum wingspan,
 m_bat_min,0,kg,,
 m_bat_max,4,kg,,
 e_bat,250,Wh/kg,Specific energy,
 f_usable,0.8,,Fraction of rated energy usable,
 reserve_fraction,0.3,,Fraction of the battery we want available by morning,
-m_other,0.35,kg,non-wing weight,structure calcs
+m_other,0.292,kg,non-wing weight,structure calcs. Measured from V1 plane
+m_wing,0.487,kg,wing weight,structure calcs. Measured from V1 plane
 TC,0.073,,max thickness to chord ratio,structure calcs
-G_max,6,G,maximum G's experienced,structure calcs
-FOS,1.5,,structural FOS,structure calcs
+G_max,19,G,maximum G's experienced,structure calcs
 b,2.04,m,wingspan,structure calcs
 nu_max,0.02,m,max deflection allowed,structure calcs
-E_cap,1.34E+11,Pa,spar cap modulus. https://www.performance-composites.com/carbonfibre/mechanicalproperties_2.asp,structure calcs
+E_cap,1.34E+11,Pa,spar cap modulus. https://www.performance-composites.com/carbonfibre/mechanicalproperties_2.asp,structure calcs. https://www.performance-composites.com/carbonfibre/mechanicalproperties_2.asp
 th_skin,0.000075,m,wing skin layer thickness,structure calcs
-th_cap,0.00015,m,spar cap thickness,structure calcs
+th_cap,0.00015,m,spar cap thickness,structure calcs. https://cdn.shopify.com/s/files/1/0690/7415/7805/files/00962_AOD.pdf?v=1773746577
 db,0.02,m,wing station spacing,structure calcs
-rho_cap,1780,kg/m^3,spar cap density. https://acpcomposites.com/shop/fabrics/tow-cord/carbon-fiber-tow,structure calcs
+rho_cap,1639,kg/m^3,spar cap density. https://acpcomposites.com/shop/fabrics/tow-cord/carbon-fiber-tow,structure calcs. Measured from our uni carbon (connor 10-18-2026 notes)
 dtheta_max,0.01,rad/m,max curvature allowed,structure calcs
+N_bat,0,,number of battery cells,weight calcs
+afoil_th_ratio,0.0457,,airfoil average thickness compared to chord,weight calcs
+afoil_area_ratio,2.1,,airfoil surface area to chord ratio,weight calcs
+Ch_sc,1,,number of solar cells along the chord,weight calcs
+frac_sc,1,,fraction of potential solar cell area actually covered in cells - to account for ailerons,weight calcs
+m_elec_w,0.03,kg,mass of the electronics in the wing including servos and wires,weight calcs
+bat_cutout,0,,bool for if there's a cutout for 18650 batteries to fit in the wing core,weight calcs

@@ -19,7 +19,7 @@ h = 820      #altitude(M)
 date_time = datetime(2027, 6, 11, 7, 0) #date, Y-M-D-H-M
 normal = np.array([0,0,-1])   #North-East-Down normal vector
 
-L_step = 0.1
+b_step= 0.1
 m_bat_step = 0.1
 
 # Simulation parameters
@@ -45,12 +45,12 @@ def battery_limits(m_bat):
 
 
 
-def simulate_battery(L, m_bat, solar_power):
+def simulate_battery(b, m_bat, solar_power):
 
     E_min, E_max = battery_limits(m_bat)
 
     motor_power = P_level(
-        L, m_bat, p['C_D'], p['C_L'], p['m_L'], p['m_rest'], h, p['Ch']
+        b, m_bat, p['C_D'], p['C_L'], p['m_L'], p['m_rest'], h, p['Ch']
     ) / p['Eta_prop']
 
     load = motor_power + p['P_av'] + p['P_pld']
@@ -86,11 +86,11 @@ def simulate_battery(L, m_bat, solar_power):
     )
 
 
-L_values = np.round(
+b_values = np.round(
     np.arange(
-        p['L_min'],
-        p['L_max'] + L_step / 2,
-        L_step
+        p['b_min'],
+        p['b_max'] + b_step / 2,
+        b_step
     ),
     3
 )
@@ -108,10 +108,10 @@ print("Precomputing solar power profiles...")
 
 solar_profiles = {}
 
-for L_test in L_values:
-    solar_profiles[L_test] = np.array([
+for b_test in b_values:
+    solar_profiles[b_test] = np.array([
         P_sol(
-            L_test, lat, h, t,
+            b_test, lat, h, t,
             normal, p['Ch'], p['Eta_mppt']
         )
         for t in times
@@ -123,8 +123,8 @@ print("Searching candidate designs...")
 feasible_designs = []
 all_designs = []
 
-for L_test in L_values:
-    solar_power = solar_profiles[L_test]
+for b_test in b_values:
+    solar_power = solar_profiles[b_test]
 
     for m_bat_test in battery_values:
 
@@ -135,13 +135,13 @@ for L_test in L_values:
             motor_power,
             feasible
         ) = simulate_battery(
-            L_test, m_bat_test, solar_power
+            b_test, m_bat_test, solar_power
         )
 
         E_min, E_max = battery_limits(m_bat_test)
 
         result = {
-            "L": L_test,
+            "b": b_test,
             "m_bat": m_bat_test,
             "motor_power": motor_power,
             "load": load,
@@ -168,14 +168,14 @@ else:
     # minimum battery mass.
     best = min(
         feasible_designs,
-        key=lambda d: (d["m_bat"], d["L"])
+        key=lambda d: (d["m_bat"], d["b"])
     )
 
-    L = best["L"]
+    b = best["b"]
     m_bat = best["m_bat"]
 
     print("\n========== OPTIMAL DESIGN ==========")
-    print(f"Wingspan:              {L:.2f} m")
+    print(f"Wingspan:              {b:.2f} m")
     print(f"Battery mass:          {m_bat:.2f} kg")
     print(f"Battery capacity:      {best['E_max']:.1f} Wh")
     print(f"Minimum reserve:       {best['E_min']:.1f} Wh")
@@ -188,7 +188,7 @@ else:
     print(f"Designs tested:        {len(all_designs)}")
 
 
-    P_solar = solar_profiles[L]
+    P_solar = solar_profiles[b]
 
     (
         E_battery,
@@ -196,7 +196,7 @@ else:
         P_load,
         P_motor,
         feasible
-    ) = simulate_battery(L, m_bat, P_solar)
+    ) = simulate_battery(b, m_bat, P_solar)
 
     plot_results(
         times=times,

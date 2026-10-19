@@ -11,21 +11,21 @@ Ep_T_sm = 1.0        #(Y)Temperature efficency, need to model
 Ep_cbr_sm = 0.97     #Wing Chamber Efficency, V1 results
 
 
-def P_sol(L, lat, h, date_time, normal, Ch, Eta_mppt):
+def P_sol(b, lat, h, date_time, normal, Ch, Eta_mppt):
 
     irradiance = irradiance_on_plane(
          normal, h, date_time, lat
     )
 
-    panel_area = Ch * L * 0.85  # 85% of wing area covered by solar cells
+    panel_area = Ch * b * 0.85  # 85% of wing area covered by solar cells
 
     return irradiance * panel_area * Eta_sm() * Eta_mppt
 
 
-def P_level(L, m_bat, C_D, C_L, m_L, m_rest, h, Ch):    
+def P_level(b, m_bat, C_D, C_L, m_L, m_rest, h, Ch):    
 
-    total_mass = ((m_L * L)) + m_bat + m_rest
-    wing_area = Ch * L
+    total_mass = ((m_L * b)) + m_bat + m_rest
+    wing_area = Ch * b
 
     return (
         C_D / (C_L ** (3 / 2))
@@ -64,14 +64,14 @@ def rho(h):
 
 
 
-def dE_bat_dt(L, Ch, lat, h, date_time, normal, Eta_mppt,
+def dE_bat_dt(b, Ch, lat, h, date_time, normal, Eta_mppt,
               C_D, C_L, m_L, m_rest, m_bat, Eta_prop, P_av, P_pld):
     solar_power = P_sol(
-        L, lat, h, date_time, normal, Ch, Eta_mppt
+        b, lat, h, date_time, normal, Ch, Eta_mppt
     )
 
     propulsion_power = P_level(
-        L, m_bat, C_D, C_L, m_L, m_rest, h, Ch
+        b, m_bat, C_D, C_L, m_L, m_rest, h, Ch
     ) / Eta_prop
 
     total_load = propulsion_power + P_av + P_pld
