@@ -115,7 +115,5 @@ if __name__ == "__main__":
         reader = csv.DictReader(file)
         p = {row['param']:float(row['value']) for row in reader}
 
-    m_wing = mass_wing(p)
-    m_fuse = mass_fuse(p)
-    m_tot = m_wing + m_fuse
+    m_tot = mass_tot(p)
     print(f"m_tot = {m_tot:.4g} kg")
