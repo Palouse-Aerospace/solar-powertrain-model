@@ -78,3 +78,50 @@ def dE_bat_dt(b, Ch, lat, h, date_time, normal, Eta_mppt,
 
     return solar_power - total_load
 
+
+def battery_limits(m_bat, p):
+    E_max = m_bat * p['e_bat'] * p['f_usable']
+    E_min = p['reserve_fraction'] * E_max
+    return E_min, E_max
+
+
+
+def simulate_battery(b, m_bat, solar_power, p, h, times, n_steps, dt_hours, steps_per_day):
+
+    E_min, E_max = battery_limits(m_bat, p)
+
+    motor_power = P_level(
+        b, m_bat, p['C_D'], p['C_L'], p['m_L'], p['m_rest'], h, p['Ch']
+    ) / p['Eta_prop']
+
+    load = motor_power + p['P_av'] + p['P_pld']
+
+    # Positive = charging; negative = discharging
+    battery_power = solar_power - load
+
+    energy = np.zeros(len(times))
+    energy[0] = E_max
+
+    for k in range(n_steps):
+        E_next = (
+            energy[k] + battery_power[k] * dt_hours
+        )
+        energy[k + 1] = min(E_next, E_max)
+
+    # Must maintain the required reserve at every timestep
+    reserve_ok = np.all(energy >= E_min)
+
+    # Compare energy at the same clock time on days 1 and 2
+    repeatability_ok = (
+        energy[-1] >= energy[-1 - steps_per_day]
+    )
+
+    feasible = reserve_ok and repeatability_ok
+
+    return (
+        energy,
+        battery_power,
+        load,
+        motor_power,
+        feasible
+    )

@@ -2,7 +2,7 @@ import numpy as np
 from datetime import timedelta, datetime
 import csv
 
-from solar_model.functions import P_sol, P_level, dE_bat_dt
+from solar_model.functions import P_sol, P_level, dE_bat_dt, battery_limits, simulate_battery
 from graphing.power_time import plot_results
 from graphing.battery_wingspan import plot_design_space
 
@@ -36,54 +36,6 @@ times = [
 
 # Index for comparing the same time on consecutive days
 steps_per_day = int(round(24.0 / dt_hours))
-
-
-def battery_limits(m_bat):
-    E_max = m_bat * p['e_bat'] * p['f_usable']
-    E_min = p['reserve_fraction'] * E_max
-    return E_min, E_max
-
-
-
-def simulate_battery(b, m_bat, solar_power):
-
-    E_min, E_max = battery_limits(m_bat)
-
-    motor_power = P_level(
-        b, m_bat, p['C_D'], p['C_L'], p['m_L'], p['m_rest'], h, p['Ch']
-    ) / p['Eta_prop']
-
-    load = motor_power + p['P_av'] + p['P_pld']
-
-    # Positive = charging; negative = discharging
-    battery_power = solar_power - load
-
-    energy = np.zeros(len(times))
-    energy[0] = E_max
-
-    for k in range(n_steps):
-        E_next = (
-            energy[k] + battery_power[k] * dt_hours
-        )
-        energy[k + 1] = min(E_next, E_max)
-
-    # Must maintain the required reserve at every timestep
-    reserve_ok = np.all(energy >= E_min)
-
-    # Compare energy at the same clock time on days 1 and 2
-    repeatability_ok = (
-        energy[-1] >= energy[-1 - steps_per_day]
-    )
-
-    feasible = reserve_ok and repeatability_ok
-
-    return (
-        energy,
-        battery_power,
-        load,
-        motor_power,
-        feasible
-    )
 
 
 b_values = np.round(
@@ -135,10 +87,10 @@ for b_test in b_values:
             motor_power,
             feasible
         ) = simulate_battery(
-            b_test, m_bat_test, solar_power
+            b_test, m_bat_test, solar_power, p, h, times, n_steps, dt_hours, steps_per_day
         )
 
-        E_min, E_max = battery_limits(m_bat_test)
+        E_min, E_max = battery_limits(m_bat_test, p)
 
         result = {
             "b": b_test,
@@ -196,7 +148,7 @@ else:
         P_load,
         P_motor,
         feasible
-    ) = simulate_battery(b, m_bat, P_solar)
+    ) = simulate_battery(b, m_bat, P_solar, p, h, times, n_steps, dt_hours, steps_per_day)
 
     plot_results(
         times=times,
