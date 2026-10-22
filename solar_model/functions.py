@@ -3,6 +3,7 @@ import numpy as np
 
 from solarpy import irradiance_on_plane
 from datetime import datetime
+from weight_model.weight import mass_wing
 
 
 Eta_stc_sm = 0.237   #(Y)Standard Testing Condition solar conversion efficency, need to look at data sheet
@@ -22,13 +23,13 @@ def P_sol(b, lat, h, date_time, normal, Ch, Eta_mppt):
     return irradiance * panel_area * Eta_sm() * Eta_mppt
 
 
-def P_level(b, m_bat, C_D, C_L, m_L, m_rest, h, Ch):    
+def P_level(b, m_bat, p, h):    
 
-    total_mass = ((m_L * b)) + m_bat + m_rest
-    wing_area = Ch * b
+    total_mass = mass_wing(p, b) + m_bat + p['m_rest']
+    wing_area = p['Ch'] * b
 
     return (
-        C_D / (C_L ** (3 / 2))
+        p['C_D'] / (p['C_L'] ** (3 / 2))
         * (
            2 * (total_mass * 9.81) ** 3
             / (rho(h) * wing_area)
@@ -91,7 +92,7 @@ def simulate_battery(b, m_bat, solar_power, p, h, times, n_steps, dt_hours, step
     E_min, E_max = battery_limits(m_bat, p)
 
     motor_power = P_level(
-        b, m_bat, p['C_D'], p['C_L'], p['m_L'], p['m_rest'], h, p['Ch']
+        b, m_bat, p, h
     ) / p['Eta_prop']
 
     load = motor_power + p['P_av'] + p['P_pld']

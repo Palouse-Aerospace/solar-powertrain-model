@@ -1,5 +1,5 @@
 ﻿param,value,unit,description,notes
-debug,1,,bool for debug info,
+debug,0,,bool for debug info,
 C_L,0.8,,Coeff of lift,
 C_D,0.017,,"(Y)Coeff of drag, need to add parasitic and induced drag",
 Eta_prop,1,,"(X)Prop, Esc, Motor effiency, need to test",

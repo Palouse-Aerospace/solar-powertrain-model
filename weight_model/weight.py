@@ -22,13 +22,15 @@ efrac_cf = 0.6 # carbon fiber/epoxy mass fraction
 efrac_sc = 0.95 # solar cell/epoxy mass fraction
 
 ### Wing ###
-def mass_wing(p):
+def mass_wing(p, b=None):
     ### Wing mass estimation ###
     # This assumes a similar construction to the V1 plane wing
 
+    if b is None:  #This is so it can be used in the optimization code
+         b = p['b']
+
     # Inputs
     Ch = p['Ch']
-    b = p['b']
     N_bat = p['N_bat']
 
     afoil_th_ratio = p['afoil_th_ratio']
