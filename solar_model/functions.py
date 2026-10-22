@@ -3,7 +3,7 @@ import numpy as np
 
 from solarpy import irradiance_on_plane
 from datetime import datetime
-from weight_model.weight import mass_wing
+from weight_model.weight import mass_wing, mass_fuse
 
 
 Eta_stc_sm = 0.237   #(Y)Standard Testing Condition solar conversion efficency, need to look at data sheet
@@ -25,7 +25,7 @@ def P_sol(b, lat, h, date_time, normal, Ch, Eta_mppt):
 
 def P_level(b, m_bat, p, h):    
 
-    total_mass = mass_wing(p, b) + m_bat + p['m_rest']
+    total_mass = mass_wing(p, b) + m_bat + mass_fuse(p, b)
     wing_area = p['Ch'] * b
 
     return (

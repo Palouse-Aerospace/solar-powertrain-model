@@ -113,15 +113,59 @@ for b_test in b_values:
             feasible_designs.append(result)
 
 
+
 if not feasible_designs:
     print("\nNo feasible design found within the search bounds.")
 
 else:
-    # minimum battery mass.
-    best = min(
-        feasible_designs,
-        key=lambda d: (d["m_bat"], d["b"])
+    # Calculate solar power per unit mass and battery mass objectives.
+    for d in feasible_designs:
+        b_test = d["b"]
+
+        d["mean_solar_power"] = float(
+            np.mean(solar_profiles[b_test])
+        )
+
+        # Replace this with a more detailed mass model if needed.
+        d["total_mass"] = (
+            p["m_rest"] + p["m_L"] * b_test + d["m_bat"]
+        )
+
+        d["solar_power_per_mass"] = (
+            d["mean_solar_power"] / d["total_mass"]
+        )
+
+    max_ratio = max(
+        d["solar_power_per_mass"] for d in feasible_designs
     )
+
+    max_battery_mass = max(
+        d["m_bat"] for d in feasible_designs
+    )
+
+    min_battery_mass = min(
+        d["m_bat"] for d in feasible_designs
+    )
+
+    # Normalize both objectives to a 0-1 scale.
+    for d in feasible_designs:
+        if max_ratio > 0:
+            ratio_score = d["solar_power_per_mass"] / max_ratio
+        else:
+            ratio_score = 0.0
+
+        if max_battery_mass == min_battery_mass:
+            battery_score = 1.0
+        else:
+            battery_score = (
+                (max_battery_mass - d["m_bat"])
+                / (max_battery_mass - min_battery_mass)
+            )
+
+        d["score"] = 0.5 * ratio_score + 0.5 * battery_score
+
+    # Select the highest combined score.
+    best = max(feasible_designs, key=lambda d: d["score"])
 
     b = best["b"]
     m_bat = best["m_bat"]
@@ -129,6 +173,10 @@ else:
     print("\n========== OPTIMAL DESIGN ==========")
     print(f"Wingspan:              {b:.2f} m")
     print(f"Battery mass:          {m_bat:.2f} kg")
+    print(f"Total aircraft mass:   {best['total_mass']:.2f} kg")
+    print(f"Mean solar power:      {best['mean_solar_power']:.2f} W")
+    print(f"Solar power per mass:  {best['solar_power_per_mass']:.2f} W/kg")
+    print(f"Combined score:        {best['score']:.4f}")
     print(f"Battery capacity:      {best['E_max']:.1f} Wh")
     print(f"Minimum reserve:       {best['E_min']:.1f} Wh")
     print(f"Motor power:           {best['motor_power']:.2f} W")
@@ -139,7 +187,18 @@ else:
     print(f"Feasible designs:      {len(feasible_designs)}")
     print(f"Designs tested:        {len(all_designs)}")
 
+    # Also report the best design for each individual objective.
+    best_solar_per_mass = max(
+        feasible_designs,
+        key=lambda d: d["solar_power_per_mass"]
+    )
 
+    best_battery_mass = min(
+        feasible_designs,
+        key=lambda d: d["m_bat"]
+    )
+
+    # Re-simulate the selected design for plotting
     P_solar = solar_profiles[b]
 
     (
@@ -148,7 +207,10 @@ else:
         P_load,
         P_motor,
         feasible
-    ) = simulate_battery(b, m_bat, P_solar, p, h, times, n_steps, dt_hours, steps_per_day)
+    ) = simulate_battery(
+        b, m_bat, P_solar, p, h, times,
+        n_steps, dt_hours, steps_per_day
+    )
 
     plot_results(
         times=times,
@@ -158,5 +220,5 @@ else:
         P_battery=P_battery,
         E_battery=E_battery,
         E_max=best["E_max"],
-        reserve_fraction=p['reserve_fraction']
+        reserve_fraction=p["reserve_fraction"]
     )

@@ -22,16 +22,17 @@ efrac_cf = 0.6 # carbon fiber/epoxy mass fraction
 efrac_sc = 0.95 # solar cell/epoxy mass fraction
 
 ### Wing ###
-def mass_wing(p, b=None):
+def mass_wing(p, b=None, N_bat=None):
     ### Wing mass estimation ###
     # This assumes a similar construction to the V1 plane wing
 
     if b is None:  #This is so it can be used in the optimization code
          b = p['b']
+    if N_bat is None:  #This is also just for the optimization
+         N_bat = p['N_bat']
 
     # Inputs
     Ch = p['Ch']
-    N_bat = p['N_bat']
 
     afoil_th_ratio = p['afoil_th_ratio']
     afoil_area_ratio = p['afoil_area_ratio']
@@ -77,14 +78,18 @@ def mass_wing(p, b=None):
 
     return m_wing
 
-def mass_fuse(p):
+def mass_fuse(p, b):
     ### Fuselage mass estimation ###
     # this is stupid baka garbage
     # somewhat based on Noth except we're not including the wing so it's weird
     # ^I reduced the exponent for that reason
 
+    #The f*** is this? Im so confused
+
     # Inputs
-    b = p['b']
+    if b is None:  #This is so it can be used in the optimization code
+             b = p['b']
+
     Ch = p['Ch']
 
     A = 0.156 # matched to the other parameters given data from Solar Plane V1 
