@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from functions import P_sol, P_level
+from solar_model.functions import P_sol, P_level
 
 
 def plot_design_space(

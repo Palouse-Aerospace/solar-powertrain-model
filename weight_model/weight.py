@@ -1,6 +1,6 @@
 import csv
 import math
-from structure import spar_calc
+from weight_model.structure import spar_calc
 
 ### Inputs ###
 with open('params.csv', newline='', mode='r', encoding='utf-8-sig') as file:

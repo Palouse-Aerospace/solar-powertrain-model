@@ -2,9 +2,9 @@ import numpy as np
 from datetime import timedelta, datetime
 import csv
 
-from functions import P_sol, P_level, dE_bat_dt
-from power_time import plot_results
-from battery_wingspan import plot_design_space
+from solar_model.functions import P_sol, P_level, dE_bat_dt
+from graphing.power_time import plot_results
+from graphing.battery_wingspan import plot_design_space
 
 # Loading technical parameters
 with open('params.csv', newline='', mode='r', encoding='utf-8-sig') as file:
