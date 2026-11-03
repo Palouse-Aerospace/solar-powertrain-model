@@ -12,46 +12,43 @@ This project simulates the battery as a function of time, and optimizes battery 
 
 ## Key Features
 
-- **Solar Power Modeling:** Based on the nominal solar output calculation from [*Oettershagen et al., 2017*](https://arxiv.org/pdf/1703.07385).
+- **Solar Power Modeling**, based on the nominal solar output calculation from [*Oettershagen et al., 2017*](https://arxiv.org/pdf/1703.07385)
 
-  $$
-  P_{\mathrm{sol}}^{\mathrm{nom}} =
-  I_{\mathrm{solar}}(\varphi_{\mathrm{lat}}, h, \delta, t, \vec{n}_{\mathrm{sm}})
-  \cdot A_{\mathrm{sm}}
-  \cdot \eta_{\mathrm{sm}}
-  \cdot \eta_{\mathrm{mppt}}
-  $$
+$$
+\begin{aligned}
+P_{\mathrm{sol}}^{\mathrm{nom}} = {} &
+I_{\mathrm{solar}}(\varphi_{\mathrm{lat}}, h, \delta, t, \mathbf{n}_{\mathrm{sm}})
+\cdot A_{\mathrm{sm}} \cdot \eta_{\mathrm{sm}} \cdot \eta_{\mathrm{mppt}}
+\end{aligned}
+$$
+  
+- **Aircraft Power Consumption**, based on the level flight calculation from [*Oettershagen et al., 2015*](https://www.atlantiksolar.ethz.ch/wp-content/downloads/publications/AtlantikSolar_ICRA_2015_vFinal.pdf)
 
-- **Aircraft Power Consumption:** Based on the level-flight power calculation from [*Oettershagen et al., 2015*](https://www.atlantiksolar.ethz.ch/wp-content/downloads/publications/AtlantikSolar_ICRA_2015_vFinal.pdf).
+$$
+\begin{aligned}
+P_{\mathrm{level}} = {} &
+\left(\frac{C_D}{C_L^{3/2}}\right)_{\min}
+\sqrt{
+\frac{2(m_{\mathrm{tot}}g)^3}
+{\rho(h)A_{\mathrm{wing}}}
+}
+\end{aligned}
+$$
+  
+  $$P_{\mathrm{out}}^{\mathrm{nom}}=\frac{P_{\mathrm{level}}}{\eta_{\mathrm{prop}}}+P_{\mathrm{av}}+P_{\mathrm{pld}}$$
+  
+- **Battery Simulation**, based on the battery state equation from [*Oettershagen et al., 2015*](https://www.atlantiksolar.ethz.ch/wp-content/downloads/publications/AtlantikSolar_ICRA_2015_vFinal.pdf)
 
-  $$
-  P_{\mathrm{level}} =
-  \left(\frac{C_D}{C_L^{3/2}}\right)_{\min}
-  \sqrt{\frac{2(m_{\mathrm{tot}}g)^3}{\rho(h)A_{\mathrm{wing}}}}
-  $$
-
-  $$
-  P_{\mathrm{out}}^{\mathrm{nom}} =
-  \frac{P_{\mathrm{level}}}{\eta_{\mathrm{prop}}}
-  + P_{\mathrm{av}} + P_{\mathrm{pld}}
-  $$
-
-- **Battery Simulation:** Based on the battery state equation from [*Oettershagen et al., 2015*](https://www.atlantiksolar.ethz.ch/wp-content/downloads/publications/AtlantikSolar_ICRA_2015_vFinal.pdf).
-
-  $$
-  \frac{dE_{\mathrm{bat}}}{dt} =
-  P_{\mathrm{solar}}(\varphi, h, t)
-  - P_{\mathrm{prop}}
-  - P_{\mathrm{av}}
-  - P_{\mathrm{pld}}
-  $$
-
-- **Optimization:** Uses grid-based optimization to find the minimum battery mass and optimal wing length for solar energy generation.
-
-- **Performance Visualization:** Uses Matplotlib to generate energy-over-time graphs and visualize powertrain performance.
-
-- **Mass Modeling:** Estimates aircraft mass and structural weight using previously collected data from the V1 aircraft.
-s
+ $$
+\begin{gathered}
+\frac{dE_{\mathrm{bat}}}{dt} =
+P_{\mathrm{solar}}(\varphi, h, t)-P_{\mathrm{prop}}-P_{\mathrm{av}}-P_{\mathrm{pld}}
+\end{gathered}
+$$
+  
+- **Optimization**, using a grid based optimization to find the minimum battery mass and optimum wing length for solar generation
+- **Performance Visualization**, using MatPlotLib a energy over time graph can be created for the power train. 
+- **Mass Modeling**, the weight and structure can be modeling using previously gathered data from V1
 
 ## Getting Started
 ### Requirements
